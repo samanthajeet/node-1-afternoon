@@ -36,6 +36,7 @@ export default class Message extends Component {
     return (
       <div className="Message__container">
         <span className="Message__time">{time}</span>
+        
         {
           editting
           ?

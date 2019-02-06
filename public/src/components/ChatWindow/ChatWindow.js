@@ -13,13 +13,15 @@ export default class ChatWindow extends Component {
     super();
     this.state = {
       messages: [],
-      text: ''
+      text: '',
+      name: ''
     };
 
     this.handleChange = this.handleChange.bind( this );
     this.createMessage = this.createMessage.bind( this );
     this.editMessage = this.editMessage.bind( this );
     this.removeMessage = this.removeMessage.bind( this );
+    this.addName = this.addName.bind( this );
   }
 
   componentDidMount() {
@@ -32,14 +34,22 @@ export default class ChatWindow extends Component {
     this.setState({ text: event.target.value });
   }
 
+  addName( event ) {
+    this.setState({
+      name: event.target.value
+    })
+  }
+
   createMessage( event ) {
-    const { text } = this.state;
+    const { text, name } = this.state;
     if ( event.key === "Enter" && text.length !== 0 ) {
-      axios.post( url, { text, time: dateCreator() } ).then( response => {
+      axios.post( url, { text, name, time: dateCreator() } ).then( response => {
         this.setState({ messages: response.data });
       });
-
-      this.setState({ text: '' });
+      this.setState({
+        text: '',
+        name: ''
+      });
     }
   }
 
@@ -60,15 +70,18 @@ export default class ChatWindow extends Component {
     return (
       <div id="ChatWindow__container">
         <div id="ChatWindow__messagesParentContainer">
+        
           <div id="ChatWindow__messagesChildContainer">
             {
               this.state.messages.map( message => (
-                <Message id={ message.id} key={ message.id } text={ message.text } time={ message.time } edit={ this.editMessage } remove={ this.removeMessage } />
+                <Message id={ message.id} key={ message.id } text={ message.text } time={ message.time } edit={ this.editMessage } remove={ this.removeMessage } name={this.name} />
               ))
             }
           </div>
         </div>
         <div id="ChatWindow__newMessageContainer">
+          <input placeholder="name" onChange={this.addName}
+          />
           <input placeholder="What's on your mind? Press enter to send." 
                  onKeyPress={ this.createMessage }
                  onChange={ this.handleChange }
